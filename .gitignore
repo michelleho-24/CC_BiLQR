@@ -1,0 +1,6 @@
+# Visual Studio Code
+.vscode/
+.history/
+
+# other packages 
+GraphsOfConvexSets.jl/
