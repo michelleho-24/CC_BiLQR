@@ -1,5 +1,8 @@
 # Inspired from https://github.com/TobiaMarcucci/gcspy/blob/main/examples/shortest_path/shortest_path.py
 
+# https://github.com/cvxgrp/diffqcp
+# https://github.com/TobiaMarcucci/gcsopt
+
 using JuMP
 import Pajarito, HiGHS, Hypatia
 using LinearAlgebra

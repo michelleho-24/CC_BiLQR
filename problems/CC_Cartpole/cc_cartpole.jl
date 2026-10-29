@@ -5,14 +5,14 @@ include(joinpath(@__DIR__, "..", "..", "BiLQR", "cc_ilqr_types.jl"))
 
 @with_kw mutable struct CCCartpoleMDP <: CCiLQGPOMDP{AbstractVector, AbstractVector, AbstractVector}
     # cost
-    Q::Matrix{Float64} = 1e-4 * I(4)
-    R::Matrix{Float64} = 1e-4 * I(1)
-    Q_N::Matrix{Float64} = Diagonal([1e-4, 1e-4, 1e-4, 0.1])
-    Λ::Matrix{Float64} = Diagonal(fill(1e-4, 16))  # 4^2 - penalize state uncertainty
+    Q::Matrix{Float64} = Diagonal([10.0, 100.0, 1.0, 1.0])  # Penalize position and angle deviations
+    R::Matrix{Float64} = 0.1 * I(1)  # Small control cost
+    Q_N::Matrix{Float64} = Diagonal([10.0, 100.0, 1.0, 10.0])  # Higher terminal cost on angle
+    Λ::Matrix{Float64} = Diagonal(fill(0.1, 16))  # Penalize state uncertainty
 
     # start and goal
     Σ0::Matrix{Float64} = diagm([1e-4, 1e-4, 1e-4, 1e-4])
-    b0::MvNormal = MvNormal([0.0, π/2, 0.0, 0.0], Σ0)
+    b0::MvNormal = MvNormal([0.0, 0.0, 0.0, 0.0], Σ0)  # Start with pole upright (θ=0)
     s_init::Vector{Float64} = begin
         s = rand(b0)
         s
@@ -27,8 +27,12 @@ include(joinpath(@__DIR__, "..", "..", "BiLQR", "cc_ilqr_types.jl"))
     l::Float64 = 1.0
 
     # noise covariance matrices (4-state system)
+    # High noise (original):
     W_state_process::Matrix{Float64} = diagm([0.5, 0.1, 0.5, 0.1])
     W_process::Matrix{Float64} = diagm([0.5, 0.1, 0.5, 0.1])
+    # Low noise (for easier balancing):
+    # W_state_process::Matrix{Float64} = diagm([0.01, 0.005, 0.01, 0.005])
+    # W_process::Matrix{Float64} = diagm([0.01, 0.005, 0.01, 0.005])
     W_obs::Matrix{Float64} = 0.01 * I(4)
     W_obs_ekf::Matrix{Float64} = 0.01 * I(4)
 
